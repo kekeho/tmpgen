@@ -7,7 +7,8 @@ proc isDir(filepath: string): bool =
     else:
         result = false
 
-proc fileCopy*(from_filenames: seq, to_dir: string): void =
+
+proc fileCopy(from_filenames: seq[string], to_dir: string): void =
     discard """Copy files from [from_filenames] to [to_dir]
     Args:
         from_filenames: string which includes regular expression
