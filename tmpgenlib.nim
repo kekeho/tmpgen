@@ -1,5 +1,7 @@
 import os
 
+let template_dir = joinPath(getHomeDir(), ".tmpgen/")
+
 proc isDir(filepath: string): bool =
     let path_info: FileInfo = getFileInfo(filepath)
     if path_info.kind == pcDir:
@@ -26,14 +28,40 @@ proc fileCopy(from_filenames: seq[string], to_dir: string): void =
             copyFileWithPermissions(from_filename, to_path)
 
 
-proc copytest: void =
+proc initTemplateDir(label: string): void =
+    let template_dir = joinPath(template_dir, label)
+    removeDir(template_dir)
+
+
+proc registTemplate*(files: seq[string], label: string): void =
+    discard """Regist files with label
+    if already exist template, there will be deleted.
+    Args:
+        files: filenames seq
+        label: template's label
+    """
+    initTemplateDir(label)
+    fileCopy(files, joinPath(template_dir, label))
+
+
+proc addFilesToTemplate*(files: seq[string], label: string): void =
+    discard """Add files to template
+    if not exist template which has [label], create new template.
+    Args:
+        files: filenames seq
+        label: template's label
+    """
+    fileCopy(files, joinPath(template_dir, label))
+
+
+proc test: void =
     # argc and argv
     let
         argc = paramCount()
         argv = commandLineParams()
 
-    fileCopy(argv[0..argc-2], argv[argc-1])
+    registTemplate(argv[0..argc-2], argv[argc-1])
 
 if isMainModule:
-    copytest()
+    test()
 
