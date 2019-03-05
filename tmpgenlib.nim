@@ -1,7 +1,7 @@
 import os
 import sequtils
 
-let template_dir = joinPath(getHomeDir(), ".tmpgen/")  ## save templates to template_dir
+var template_dir* = joinPath(getHomeDir(), ".tmpgen/")  ## save templates to template_dir
 
 proc isDir(filepath: string): bool =
     ## Check is [filepath] directory?
