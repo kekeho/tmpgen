@@ -1,4 +1,5 @@
 import os
+import sequtils
 
 let template_dir = joinPath(getHomeDir(), ".tmpgen/")  ## save templates to template_dir
 
@@ -26,7 +27,6 @@ proc fileCopy(from_filenames: seq[string], to_dir: string): void =
     for from_filename in from_filenames:  ## copy each files
         let to_path: string = joinPath(to_dir, from_filename.splitPath.tail)
         if isDir(from_filename) == true:
-            echo from_filename
             copyDirWithPermissions(from_filename, to_path)
         else:
             copyFileWithPermissions(from_filename, to_path)
@@ -60,6 +60,21 @@ proc addFilesToTemplate*(files: seq[string], label: string): void =
     fileCopy(files, joinPath(template_dir, label))
 
 
+proc generate*(label: string, dir: string, pick_filenames: seq[string] = @[]): void =
+    ## Generate files from template
+    if pick_filenames.len > 0:
+        var pick_filenames = pick_filenames
+        # normalization filenames
+        for index, filename in pick_filenames:
+            pick_filenames[index] = joinPath(joinPath(template_dir, label), filename)
+        
+        fileCopy(pick_filenames, dir)
+    else:
+        let dir_name: string = joinPath(template_dir, label)
+        let dir_files: seq[string] = toSeq(walkPattern(dir_name.joinPath("/*")))
+        fileCopy(dir_files, dir)
+
+
 proc test: void =
     # argc and argv
 
@@ -67,7 +82,12 @@ proc test: void =
         argc = paramCount()
         argv = commandLineParams()
 
-    registTemplate(argv[0..argc-2], argv[argc-1])
+    # registTemplate(argv[0..argc-2], argv[argc-1])
+    if argc > 2:
+        
+        generate(argv[0], argv[1], argv[2..argc-1])
+    else:
+        generate(argv[0], argv[1])
 
 if isMainModule:
     test()
