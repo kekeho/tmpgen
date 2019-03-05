@@ -19,8 +19,9 @@ proc fileCopy(from_filenames: seq[string], to_dir: string): void =
     ## Args:
     ##     from_filenames: string which includes regular expression
     ##     to_dir: copy to [to_dir]
-    ## if not existsDir(to_dir):
-    ##     createDir(joinPath(to_dir))
+
+    if not existsDir(to_dir):
+        createDir(joinPath(to_dir))
 
     for from_filename in from_filenames:  ## copy each files
         let to_path: string = joinPath(to_dir, from_filename.splitPath.tail)
