@@ -1,5 +1,5 @@
 import argparse
-import tmpgenlib
+import tmpgen/tmpgenlib
 import strutils
 
 const VERSION = "1.0"
